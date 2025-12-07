@@ -27,12 +27,21 @@ jobs:
         run: |
           gcloud auth list
           gcloud config list
+          
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Configure Docker Auth
+      - name: Get GCP Access Token
+        id: auth-token
         run: |
-          gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+          echo "ACCESS_TOKEN=$(gcloud auth print-access-token)" >> $GITHUB_OUTPUT
+          
+      - name: Docker Login to Artifact Registry
+        run: |
+          echo "${{ steps.auth-token.outputs.ACCESS_TOKEN }}" | docker login \
+            -u oauth2accesstoken \
+            --password-stdin \
+            us-central1-docker.pkg.dev
 
       - name: Build Image
         run: |
