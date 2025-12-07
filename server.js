@@ -7,6 +7,8 @@ app.get("/", (req, res) => {
   res.send("Cloud Run is working");
 });
 
+console.log("Starting Cloud Run backend...");
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
