@@ -17,28 +17,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Authenticate to GCP via OIDC
+      - name: Authenticate to GCP via OIDC (ACCESS TOKEN MODE)
+        id: auth
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.SERVICE_ACCOUNT }}
-          
-      - name: Debug Active GCP Identity
-        run: |
-          gcloud auth list
-          gcloud config list
-          
+          token_format: "access_token"
+
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Get GCP Access Token
-        id: auth-token
+      - name: Docker Login to Artifact Registry (NO gcloud helper)
         run: |
-          echo "ACCESS_TOKEN=$(gcloud auth print-access-token)" >> $GITHUB_OUTPUT
-          
-      - name: Docker Login to Artifact Registry
-        run: |
-          echo "${{ steps.auth-token.outputs.ACCESS_TOKEN }}" | docker login \
+          echo "${{ steps.auth.outputs.access_token }}" | docker login \
             -u oauth2accesstoken \
             --password-stdin \
             us-central1-docker.pkg.dev
