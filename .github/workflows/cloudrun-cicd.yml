@@ -22,7 +22,11 @@ jobs:
         with:
           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.SERVICE_ACCOUNT }}
-
+          
+      - name: Debug Active GCP Identity
+        run: |
+          gcloud auth list
+          gcloud config list
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
 
